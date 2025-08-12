@@ -1,4 +1,5 @@
-﻿Q. Create a crud operation through a web api include database.
+
+Q. Create a crud operation ( EF Core Code First ) through a web api include database.
 
 
 SSMS Open Karen:
@@ -16,19 +17,6 @@ New Database... par click karein.
 Database Name field me apne database ka naam type karein (e.g., MyLocalDatabase).
 Default settings ko chhodein aur "OK" par click karein.
 
-Table Create Karna: 
-
-CREATE TABLE Employees (
-    Id INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100),
-    Age INT,
-    Position NVARCHAR(100)
-);
-
-Table me Data Insert Karna:
-
-INSERT INTO Employees (Name, Age, Position)
-VALUES ('Rahul', 22, 'BCA');
 
 Project Create Karna :
 
@@ -99,6 +87,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 	
 	
+   ab tool me ja kr migration add kre 
+   add-migration "abc"
+   update-database
+
 CRUD Operations ke liye Controller Banana : 
 
 Controllers folder me ek naya controller add karein: CrudController.cs.
@@ -151,3 +143,5 @@ namespace demo1.Controllers {
         }
     }
 }
+
+

@@ -1,0 +1,153 @@
+﻿Q. Create a crud operation through a web api include database.
+
+
+SSMS Open Karen:
+
+SSMS ko open karein aur "Connect to Server" ka dialog box dikhega.
+Server Type: "Database Engine" select karein.
+Server Name: (localdb)\MSSQLLocalDB type karein.
+Authentication: "Windows Authentication" select karein.
+"Connect" button par click karein.
+
+Database Create karna:
+
+Left-hand side me Object Explorer pane me Databases folder par right-click karein.
+New Database... par click karein.
+Database Name field me apne database ka naam type karein (e.g., MyLocalDatabase).
+Default settings ko chhodein aur "OK" par click karein.
+
+Table Create Karna: 
+
+CREATE TABLE Employees (
+    Id INT PRIMARY KEY IDENTITY(1,1),
+    Name NVARCHAR(100),
+    Age INT,
+    Position NVARCHAR(100)
+);
+
+Table me Data Insert Karna:
+
+INSERT INTO Employees (Name, Age, Position)
+VALUES ('Rahul', 22, 'BCA');
+
+Project Create Karna :
+
+File → New → Project → ASP.NET Core Web API select karein.
+Project ka naam de kar Create par click karein.
+Framework version select karein (e.g., .NET 6 ya .NET 7).
+
+Package Manager Console open karein aur yeh commands run karein:
+
+Install-Package Microsoft.EntityFrameworkCore
+Install-Package Microsoft.EntityFrameworkCore.SqlServer
+Install-Package Microsoft.EntityFrameworkCore.Tools
+If have used on design pattern multiple dll / layer
+Install-Package Microsoft.EntityFrameworkCore.Design
+
+
+DBContext Class Banana :
+
+Project me ek folder banayein: Data.
+Us folder ke andar ek nayi class add karein: AppDbContext.cs.
+
+Class ka code:-
+
+using Microsoft.EntityFrameworkCore;
+
+namespace YourNamespace.Data
+{
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+        public DbSet<Employees> employees { get; set; }
+    }
+}
+
+
+Model Class Banana
+
+Ek folder banayein: Models.
+Usme ek class add karein: Employees.cs.
+
+Class ka code:-
+
+namespace YourNamespace.Models
+{
+    public class Employees
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string Position { get; set; }
+    }
+}
+
+
+Configure Database Connection :
+
+appsettings.json file me connection string add karein:
+
+
+"ConnectionStrings": {
+    "DefaultConnection": "Server=YOUR_SERVER_NAME;Database=MyLocalDatabase;Trusted_Connection=True;MultipleActiveResultSets=true"
+}
+
+Program.cs file me DbContext ko configure karein:
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+	
+	
+CRUD Operations ke liye Controller Banana : 
+
+Controllers folder me ek naya controller add karein: CrudController.cs.
+
+using demo1.Data;
+using demo1.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace demo1.Controllers {
+    [Route("api/CodeFirst")]
+    [ApiController]
+    public class CodeFirstController : ControllerBase {
+        private readonly AppDbContext _appDbContext;
+
+        public CodeFirstController(AppDbContext appDbContext) {
+            _appDbContext = appDbContext;
+        }
+
+        [HttpGet]
+        [Route("getvalue")]
+        public List<Employees> GetEmployees() {
+            return  _appDbContext.employees.ToList();
+        }
+
+        [HttpGet]
+        [Route("getById")]
+        public async Task<object> Get(int id) {
+            var employee = await _appDbContext.employees.FindAsync(id);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return employee;
+        }
+
+        [HttpPost]
+        [Route("upsert")]
+        public async Task<bool> Post(Employees employee) {
+
+            _appDbContext.employees.Add(employee);
+          var res = await _appDbContext.SaveChangesAsync();
+            if (res != 0)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+}

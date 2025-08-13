@@ -28,9 +28,14 @@ namespace Crud.Web.Api.Repository {
                 _appDbContext.SaveChanges();
                 return user;
             }
+            else {
+                _appDbContext.Users.Update(user);
+                _appDbContext.SaveChanges();
+            }
 
             return user;
         }
 
     }
 }
+

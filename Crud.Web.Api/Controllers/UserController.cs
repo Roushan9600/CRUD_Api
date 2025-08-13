@@ -35,22 +35,6 @@ namespace Crud.Web.Api.Controllers
             return Ok( new { userId = createdUser.Id });
         }
 
-
-        [HttpPut]
-        [Route("Put/user/{id}")]
-        [Obsolete]
-        public IActionResult PutUser(int id, [FromBody]string value)
-        {
-            return Ok(new { id, value });
-        }
-
-
-        [HttpDelete]
-        [Route("delete/user/{id}")]
-        [Obsolete]
-        public bool DeleteUser(int id)
-        {
-            return  true;
-        }
     }
 }
+

@@ -12,9 +12,7 @@ namespace Crud.Web.Api.Repository {
 
 
         public Users? GetUserById(int id) {
-            //_appDbContext.Users.FromSqlInterpolated($"SELECT * FROM Users WHERE Id = {id}")
-            //    .AsNoTracking() // optional, agar update nahi karna
-            //    .FirstOrDefault();
+            //_appDbContext.Users.FromSqlInterpolated($"SELECT * FROM Users WHERE Id = {id}");
             return _appDbContext.Users.FirstOrDefault(u => u.Id == id);
             
         }
@@ -41,5 +39,6 @@ namespace Crud.Web.Api.Repository {
 
     }
 }
+
 
 
